@@ -147,6 +147,7 @@ void ExtractObjectFeature(const Object& src, const Object& obj, float dis,
       geometry::utils::AngleSub(obj.heading(), src.heading());
   const geometry::Vector2D relative_velocity = obj.Velocity() - src.Velocity();
   const int64_t obj_type = static_cast<int64_t>(obj.Type());
+
   feature[0] = 1.0f;  // Valid
   feature[1] = dis;
   feature[2] = azimuth;
@@ -159,6 +160,23 @@ void ExtractObjectFeature(const Object& src, const Object& obj, float dis,
   // One-hot vector for object_type, assume feature is initially 0.
   feature[8 + obj_type] = 1.0f;
 }
+
+void ExtractDistanceID(const Object& obj, const Object& src, float* feature) {
+  const geometry::Vector2D d = obj.target_position() - src.position();
+  const float obj_target_dist = d.Norm();
+  const int64_t obj_id = static_cast<int64_t>(obj.id());
+  feature[2] = obj_target_dist;
+  feature[3] = obj_id;
+}
+
+void ExtractVisibleFeatures(const Object& obj, const Object& src, float* feature) {
+  const int64_t obj_id = static_cast<int64_t>(obj.id());
+  const int64_t src_id = static_cast<int64_t>(src.id());
+  if (src_id == obj_id) {
+    feature[0] = 1;
+  }
+}
+
 
 void ExtractRoadPointFeature(const Object& src, const RoadPoint& obj, float dis,
                              float* feature) {
@@ -409,6 +427,7 @@ NdArray<float> Scenario::EgoState(const Object& src) const {
   return state;
 }
 
+
 std::unordered_map<std::string, NdArray<float>> Scenario::VisibleState(
     const Object& src, float view_dist, float view_angle, float head_angle,
     bool padding) const {
@@ -434,17 +453,33 @@ std::unordered_map<std::string, NdArray<float>> Scenario::VisibleState(
                                      : static_cast<int64_t>(s_targets.size());
 
   NdArray<float> o_feature({num_objects, kObjectFeatureSize}, 0.0f);
+  NdArray<float> o_tom_feature({num_objects, 4}, 0.0f);
   NdArray<float> r_feature({num_road_points, kRoadPointFeatureSize}, 0.0f);
   NdArray<float> t_feature({num_traffic_lights, kTrafficLightFeatureSize},
                            0.0f);
   NdArray<float> s_feature({num_stop_signs, kStopSignsFeatureSize}, 0.0f);
-
   // Object feature.
   float* o_feature_ptr = o_feature.DataPtr();
+  float* o_tom_ptr = o_tom_feature.DataPtr();
   for (const auto [obj, dis] : o_targets) {
     ExtractObjectFeature(src, *(dynamic_cast<const Object*>(obj)), dis,
                          o_feature_ptr);
+    const auto [visible_objs, road_points, traffic_lights, stop_signs] =
+      VisibleObjects(*(dynamic_cast<const Object*>(obj)), view_dist, view_angle, head_angle);
+
+    const auto k_visible_objs = NearestK(*(dynamic_cast<const Object*>(obj)), visible_objs, max_visible_objects_);
+
+    for (const auto [vis_obj, vis_dis] : k_visible_objs) {
+      ExtractVisibleFeatures(*(dynamic_cast<const Object*>(vis_obj)), src, o_tom_ptr);
+    }
+    if (o_tom_ptr[0] == 0) {
+        o_tom_ptr[1] = 1;
+    }
+
+    ExtractDistanceID(*(dynamic_cast<const Object*>(obj)), src, o_tom_ptr);
+
     o_feature_ptr += kObjectFeatureSize;
+    o_tom_ptr += 4;
   }
 
   // RoadPoint feature.
@@ -474,7 +509,8 @@ std::unordered_map<std::string, NdArray<float>> Scenario::VisibleState(
   return {{"objects", o_feature},
           {"road_points", r_feature},
           {"traffic_lights", t_feature},
-          {"stop_signs", s_feature}};
+          {"stop_signs", s_feature},
+          {"toms",o_tom_feature}};
 }
 
 NdArray<float> Scenario::FlattenedVisibleState(const Object& src,
