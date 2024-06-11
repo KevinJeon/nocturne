@@ -2,7 +2,7 @@
 #
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-"""Run a policy over the entire train set.
+"""Run a policy over the entire training set.
 
 TODO(ev) refactor, this is wildly similar to visualize_sample_factory
 """
@@ -686,7 +686,7 @@ def load_wandb(experiment_name, cfg_filter, force_reload=False):
 
 
 def plot_goal_achieved(experiment_name, global_step_cutoff=3e9):
-    """Use the WANDB CSV to plot number of train steps v. goal achieved."""
+    """Use the WANDB CSV to plot number of training steps v. goal achieved."""
     plt.figure(dpi=300)
     df = pd.read_csv("wandb_{}.csv".format(experiment_name))
     df["timestamp"] = pd.to_datetime(df["_timestamp"] * 1e9)
@@ -758,7 +758,7 @@ def eval_generalization(output_folder,
         output_folder (str): path to folder containing agent checkpoints
         num_eval_files (int): how many files to use for eval
         files (list[str]): list of scenario files to use for eval
-        file_type (str): 'train' or 'test' used to indicate if we are
+        file_type (str): 'training' or 'test' used to indicate if we are
                          testing in or out of distribution
         scenario_dir (str): path to directory where `files` are stored
         num_file_loops (int): how many times to iterate over the files.
@@ -791,11 +791,11 @@ def eval_generalization(output_folder,
             cfg_dict['record_to'] = os.path.join(os.getcwd(), '..', 'recs')
             cfg_dict['continuous_actions_sample'] = False
             cfg_dict['discrete_actions_sample'] = False
-            # for the train set, we don't want to loop over
-            # files we didn't train on
-            # also watch out for -1 which means "train on all files"
+            # for the training set, we don't want to loop over
+            # files we didn't training on
+            # also watch out for -1 which means "training on all files"
             if cfg_dict[
-                    'num_files'] < num_eval_files and 'train' in file_type and cfg_dict[
+                    'num_files'] < num_eval_files and 'training' in file_type and cfg_dict[
                         'num_files'] != -1:
                 cfg_dict['num_eval_files'] = cfg_dict['num_files']
                 cfg_dict['num_file_loops'] = num_file_loops * int(
@@ -906,7 +906,7 @@ def main():
                     np.random.seed(0)
                     np.random.shuffle(files)
                 if file_type == 'train_{}'.format(VERSION):
-                    # for train make sure we use the same ordering
+                    # for training make sure we use the same ordering
                     # that is used in base_env
                     # TODO(eugenevinitsky) this is dangerous and could
                     # break easily
@@ -927,7 +927,7 @@ def main():
         for folder in output_folder:
             for file_type in [
                     'train_{}'.format(VERSION), 'test_{}'.format(VERSION)
-                    # 'train',
+                    # 'training',
                     # 'test'
             ]:
                 file_paths = []

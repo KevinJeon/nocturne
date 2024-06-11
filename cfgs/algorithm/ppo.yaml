@@ -7,7 +7,7 @@ n_training_threads: 1 # "Number of torch threads for training"
 n_rollout_threads: 1 # Number of parallel envs for training rollouts
 n_eval_rollout_threads: 1 # Number of parallel envs for evaluating rollouts
 n_render_rollout_threads: 1 # Number of parallel envs for rendering rollouts
-num_env_steps: 1e8 # Number of environment steps to train
+num_env_steps: 1e8 # Number of environment steps to training
 wandb: ${wandb}
 use_obs_instead_of_state: True # Whether to use global state or concatenated obs
 episode_length: ${episode_length} # Max length for any episode
@@ -27,7 +27,7 @@ gain: 0.01 # The gain # of last action layer
 use_naive_recurrent_policy: False # Whether to use a naive recurrent policy by stacking states I believe?
 use_recurrent_policy: True # Whether to use a recurrent policy
 recurrent_N: 1 # The number of recurrent layers
-data_chunk_length: 10 # Time length of chunks used to train a recurrent_policy
+data_chunk_length: 10 # Time length of chunks used to training a recurrent_policy
 
 # optimizer parameters
 lr: 5e-4 # learning rate

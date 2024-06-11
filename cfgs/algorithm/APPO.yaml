@@ -103,7 +103,7 @@ worker_num_splits: 2
                         # Typically we split a vector of envs into two parts for "double buffered" experience collectionSet this to 1 to disable double buffering. Set this to 3
                         # for triple buffering! (default: 2)
 num_policies: 1
-                        # Number of policies to train jointly (default: 1)
+                        # Number of policies to training jointly (default: 1)
 policy_workers_per_policy: 1
                         # Number of policy workers that compute forward pass (per policy) (default: 1)
 max_policy_lag: 10000

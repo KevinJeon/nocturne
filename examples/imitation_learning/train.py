@@ -134,7 +134,7 @@ def main(args):
                    settings=wandb.Settings(start_method="fork"),
                    mode=wandb_mode)
 
-    # train loop
+    # training loop
     print('Exp dir created at', exp_dir)
     print(f'`tensorboard --logdir={exp_dir}`\n')
     for epoch in range(args.epochs):
@@ -172,7 +172,7 @@ def main(args):
                     param_norm = p.grad.detach().data.norm(2)
                     total_norm += param_norm.item()**2
             total_norm = total_norm**0.5
-            metrics_dict['train/grad_norm'] = total_norm
+            metrics_dict['training/grad_norm'] = total_norm
             torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
             total_norm = 0
             for p in model.parameters():
@@ -180,27 +180,27 @@ def main(args):
                     param_norm = p.grad.detach().data.norm(2)
                     total_norm += param_norm.item()**2
             total_norm = total_norm**0.5
-            metrics_dict['train/post_clip_grad_norm'] = total_norm
+            metrics_dict['training/post_clip_grad_norm'] = total_norm
             optimizer.step()
 
             # tensorboard logging
-            metrics_dict['train/loss'] = loss.item()
+            metrics_dict['training/loss'] = loss.item()
 
             if args.actions_are_positions:
-                metrics_dict['train/x_logprob'] = log_prob[0]
-                metrics_dict['train/y_logprob'] = log_prob[1]
-                metrics_dict['train/steer_logprob'] = log_prob[2]
+                metrics_dict['training/x_logprob'] = log_prob[0]
+                metrics_dict['training/y_logprob'] = log_prob[1]
+                metrics_dict['training/steer_logprob'] = log_prob[2]
             else:
-                metrics_dict['train/accel_logprob'] = log_prob[0]
-                metrics_dict['train/steer_logprob'] = log_prob[1]
+                metrics_dict['training/accel_logprob'] = log_prob[0]
+                metrics_dict['training/steer_logprob'] = log_prob[1]
 
             if not model_cfg['discrete']:
                 diff_actions = torch.mean(torch.abs(dist.mean -
                                                     expert_actions),
                                           axis=0)
-                metrics_dict['train/accel_diff'] = diff_actions[0]
-                metrics_dict['train/steer_diff'] = diff_actions[1]
-                metrics_dict['train/l2_dist'] = torch.norm(
+                metrics_dict['training/accel_diff'] = diff_actions[0]
+                metrics_dict['training/steer_diff'] = diff_actions[1]
+                metrics_dict['training/l2_dist'] = torch.norm(
                     dist.mean - expert_actions.float())
 
             if model_cfg['discrete']:
@@ -213,12 +213,12 @@ def main(args):
                     for model_idx, expert_idx in zip(model_idxs, expert_idxs.T)
                 ]
                 if args.actions_are_positions:
-                    metrics_dict['train/x_pos_acc'] = accuracy[0]
-                    metrics_dict['train/y_pos_acc'] = accuracy[1]
-                    metrics_dict['train/heading_acc'] = accuracy[2]
+                    metrics_dict['training/x_pos_acc'] = accuracy[0]
+                    metrics_dict['training/y_pos_acc'] = accuracy[1]
+                    metrics_dict['training/heading_acc'] = accuracy[2]
                 else:
-                    metrics_dict['train/accel_acc'] = accuracy[0]
-                    metrics_dict['train/steer_acc'] = accuracy[1]
+                    metrics_dict['training/accel_acc'] = accuracy[0]
+                    metrics_dict['training/steer_acc'] = accuracy[1]
 
             for key, val in metrics_dict.items():
                 if args.write_to_tensorboard:

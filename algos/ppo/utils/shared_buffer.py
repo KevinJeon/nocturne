@@ -461,7 +461,7 @@ class SharedReplayBuffer(object):
         Yield training data for chunked RNN training.
         :param advantages: (np.ndarray) advantage estimates.
         :param num_mini_batch: (int) number of minibatches to split the batch into.
-        :param data_chunk_length: (int) length of sequence chunks with which to train RNN.
+        :param data_chunk_length: (int) length of sequence chunks with which to training RNN.
         """
         episode_length, n_rollout_threads, num_agents = self.rewards.shape[0:3]
         batch_size = n_rollout_threads * episode_length * num_agents

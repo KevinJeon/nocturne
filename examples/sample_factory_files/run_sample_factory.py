@@ -324,7 +324,7 @@ def main(cfg):
     # copy algo keys into the main keys
     for key, value in cfg_dict['algorithm'].items():
         cfg_dict[key] = value
-    # we didn't set a train directory so use the hydra one
+    # we didn't set a training directory so use the hydra one
     if cfg_dict['train_dir'] is None:
         cfg_dict['train_dir'] = os.getcwd()
         print(f'storing the results in {os.getcwd()}')

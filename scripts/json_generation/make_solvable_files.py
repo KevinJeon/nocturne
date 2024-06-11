@@ -108,18 +108,18 @@ def main():
         default=40,
         help="Number of processes over which to split file generation")
     parser.add_argument("--datatype",
-                        default='train',
+                        default='training',
                         type=str,
-                        choices=['train', 'valid'],
+                        choices=['training', 'valid'],
                         nargs='+',
-                        help="Whether to convert, train or valid data")
+                        help="Whether to convert, training or valid data")
 
     args = parser.parse_args()
     # TODO(eugenevinitsky) this currently assumes that we have
     # constructed the scenes without traffic lights and not
     # other scenes
     folders_to_convert = []
-    if 'train' in args.datatype:
+    if 'training' in args.datatype:
         folders_to_convert.append(PROCESSED_TRAIN_NO_TL)
     if 'valid' in args.datatype:
         folders_to_convert.append(PROCESSED_VALID_NO_TL)

@@ -79,7 +79,7 @@ def main():
     cmd = [
         'python',
         str(snap_dir / 'code' / 'nocturne' / 'utils' / 'imitation_learning' /
-            'train.py'), '-m'
+            'training.py'), '-m'
     ]
     print(cmd)
     cmd += overrides.cmd()

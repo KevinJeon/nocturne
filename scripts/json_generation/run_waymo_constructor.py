@@ -68,15 +68,15 @@ def main():
         action='store_true',
         help="If true, split the conversion up over multiple processes")
     parser.add_argument("--datatype",
-                        default='train',
+                        default='training',
                         type=str,
-                        choices=['train', 'valid'],
+                        choices=['training', 'valid'],
                         nargs='+',
-                        help="Whether to convert, train or valid data")
+                        help="Whether to convert, training or valid data")
 
     args = parser.parse_args()
     folders_to_convert = []
-    if 'train' in args.datatype:
+    if 'training' in args.datatype:
         folders_to_convert.append(
             (TRAIN_DATA_PATH,
              PROCESSED_TRAIN_NO_TL if args.no_tl else PROCESSED_TRAIN))

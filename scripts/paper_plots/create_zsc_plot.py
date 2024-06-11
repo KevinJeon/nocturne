@@ -82,7 +82,7 @@ if __name__ == '__main__':
     # zsc_path = '/checkpoint/eugenevinitsky/nocturne/sweep/2022.05.28/srt_12/16.43.16/4/srt_12'
     # 10000 on valid
     # zsc_path = '/checkpoint/eugenevinitsky/nocturne/sweep/2022.05.28/srt_12/16.43.16/4/srt_12'
-    # 10000 on train
+    # 10000 on training
     # zsc_path = '/checkpoint/eugenevinitsky/nocturne/sweep/2022.05.28/srt_12/16.43.16/4/srt_12'
     zsc_path = '/checkpoint/eugenevinitsky/nocturne/sweep/2022.06.01/srt_v27/17.35.33/123/srt_v27'
     create_heat_map('train_zsc_goal.npy',
